@@ -13,73 +13,76 @@ import exception.NotFoundException;
 import vo.Product;
 
 public class ProductDAO {
-	public List<Product> selectByStatus(int status) throws NotFoundException {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		List<Product> list = new ArrayList<Product>();
-		String selectByPriceSQL = "SELECT * FROM product WHERE pd_status = ? ORDER BY sold DESC";
-		try {
-			con = SQLConnection.getConnection();
+	   public List<Product> selectByStatus(int status) throws NotFoundException{
+		      Connection con = null;
+		      PreparedStatement pstmt = null;
+		      ResultSet rs = null;
+		      List<Product> list = new ArrayList<Product>();
+		      String selectByPriceSQL = "SELECT * FROM product WHERE pd_status = ? ORDER BY sold DESC";
+		      try {
+		         con = SQLConnection.getConnection();
 
-			pstmt = con.prepareStatement(selectByPriceSQL);
-			pstmt.setInt(1, status);
-			rs = pstmt.executeQuery();
+		         pstmt = con.prepareStatement(selectByPriceSQL);
+		         pstmt.setInt(1, status);
+		         rs = pstmt.executeQuery();
 
-			while (rs.next()) {
-				list.add(new Product(rs.getInt("pd_no"), rs.getInt("pd_price"), rs.getString("pd_name"),
-						rs.getInt("sold"), rs.getInt("pd_status"))
+		         while (rs.next()) {
+		            list.add(new Product(rs.getInt("pd_no"), rs.getInt("pd_price"), rs.getString("pd_name"),
+		                  rs.getInt("sold"), rs.getInt("pd_status"))
 
-				);
+		            );
 
-			}
+		         }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new NotFoundException("목록을 불러오는데 실패하였습니다.");
-		} finally {
-			SQLConnection.close(con, pstmt, rs);
-		}
-		return list;
+		      } catch (Exception e) {
+		         e.printStackTrace();
+		         throw new NotFoundException("목록을 불러오는데 실패하였습니다.");
+		      } finally {
+		         SQLConnection.close(con, pstmt, rs);
+		      }
+		      return list;
 
-	}
-
+		   }
+	
+	
 	/**
 	 * 상품명에 해당하는 상품정보 출력
-	 * 
 	 * @param pd_no
 	 * @return
 	 * @throws NotFoundException
 	 */
-	public Product selectByNo(int pd_no) throws NotFoundException {
-
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		Product product = null;
-
-		try {
-
-			String selectByNoSQL = "SELECT * FROM product WHERE pd_no = ?";
-			con = SQLConnection.getConnection();
-			pstmt = con.prepareStatement(selectByNoSQL);
-			pstmt.setInt(1, pd_no);
-			rs = pstmt.executeQuery();
-
-			if (rs.next()) {
+	public Product selectByNo(int pd_no) throws NotFoundException{
+		
+			Connection con = null;
+			PreparedStatement pstmt =null;
+			ResultSet rs = null;
+			List<Product> list = new ArrayList<Product>();
+			Product product = null;
+						
+			try {
+				
+				String selectByNoSQL = "SELECT * FROM product WHERE pd_no = ?";
+				con = SQLConnection.getConnection();
+				pstmt = con.prepareStatement(selectByNoSQL);
+				pstmt.setInt(1, pd_no);
+				rs = pstmt.executeQuery();
+				
+				if(rs.next()) {
 				product = new Product(rs.getInt("pd_no"), rs.getInt("pd_price"), rs.getString("pd_name"),
-						rs.getInt("sold"), rs.getInt("pd_status"));
-
+							rs.getInt("sold"), rs.getInt("pd_status"));
+								
+				}
+				return product;
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+				throw new NotFoundException("상품을 찾을 수 없습니다.");
+			} finally {
+				SQLConnection.close(con, pstmt, rs);
 			}
-			return product;
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			throw new NotFoundException("상품을 찾을 수 없습니다.");
-		} finally {
-			SQLConnection.close(con, pstmt, rs);
-		}
-
+			
+			
+				
 	}
 
 	public void insert(Product p) throws AddException {
@@ -107,6 +110,11 @@ public class ProductDAO {
 		}
 
 	}
+	
+	
+	
+	
+    
 
 	public void update(Product p) throws AddException {
 		Connection con = null;
@@ -160,6 +168,7 @@ public class ProductDAO {
 
 			if (flag) {
 				stmt = con.createStatement();
+				System.out.println(updateSQL1 + updateSQL2);
 				stmt.executeUpdate(updateSQL1 + updateSQL2);
 			}
 
@@ -200,20 +209,20 @@ public class ProductDAO {
 			SQLConnection.close(null, pstmt, rs);
 		}
 	}
-
+	
 	public int selectById(int no) throws NotFoundException {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-
+		
 		try {
 			con = SQLConnection.getConnection();
 			String selectById = "SELECT pd_price FROM product WHERE pd_no=?";
 			pstmt = con.prepareStatement(selectById);
 			pstmt.setInt(1, no);
 			rs = pstmt.executeQuery();
-
-			if (rs.next()) {
+			
+			if(rs.next()) {
 				return rs.getInt("pd_price");
 			} else {
 				throw new NotFoundException("해당 상품을 찾지 못했습니다");
@@ -322,6 +331,8 @@ public class ProductDAO {
 
 	}
 
+
+
 	public List<Product> selectByName(String pd_name) {
 
 		Connection con = null;
@@ -352,6 +363,31 @@ public class ProductDAO {
 		}
 		return list;
 
+	}
+
+	public static void main(String[] args) {
+//		ProductDAO dao = new ProductDAO();
+//		String name = "%스%";
+//		List<Product> list = dao.selecByName(name);
+//		
+//		for(Product p : list) {
+//			System.out.println(p.getNo() + ":" + p.getPrice() + ":"
+//					+ p.getName() + ":" + p.getSold() + ":" + p.getStatus());
+//		}
+		ProductDAO dao = new ProductDAO();
+		Product p = new Product(23, 400000, "킹크랩", 1, 2);
+		try {
+			dao.update(p);
+			System.out.println("완료");
+		} catch (AddException e) {
+
+			e.printStackTrace();
+		}
+
+//		for(Product p : list) {
+//			System.out.println(p.getNo() + ":" + p.getPrice() + ":"
+//					+ p.getName() + ":" + p.getSold() + ":" + p.getStatus());
+//		}
 	}
 
 	public List<Product> selectBySold_Customer() {

@@ -8,6 +8,7 @@ import exception.NotFoundException;
 import service.ProductService;
 import view.FailView;
 import view.SuccessView;
+import vo.Customer;
 import vo.Product;
 
 public class ProductController {
@@ -21,19 +22,19 @@ public class ProductController {
 
 		return productController;
 	}
-
-	public void findByStatus(int status) {
-
-		try {
-			List<Product> list = productService.findByStatus(status);
-			SuccessView.printByStatus(list);
-		} catch (NotFoundException e) {
-
-			e.printStackTrace();
-			FailView.printErrorMessage(e.getMessage());
-		}
-
-	}
+	
+	   public void findByStatus(int status){
+		      
+	         try {
+	            List<Product> list = productService.findByStatus(status);
+	            SuccessView.printByStatus(list);
+	         } catch (NotFoundException e) {
+	            
+	            e.printStackTrace();
+	            FailView.printErrorMessage(e.getMessage());
+	         }
+	      
+	   }
 
 	public void findByName(String pd_name) {
 
@@ -97,7 +98,7 @@ public class ProductController {
 		}
 
 	}
-
+	
 	public void productUpdate(Product p) {
 		try {
 			productService.update(p);
@@ -107,19 +108,24 @@ public class ProductController {
 			FailView.printErrorMessage(e.getMessage());
 		}
 	}
-
+	
 	public void productAdd(Product ap) {
 		try {
 			productService.productAdd(ap);
 			SuccessView.printProductAdd("상품등록이 되었습니다.");
-		} catch (AddException e) {
+		}catch(AddException e) {
 			e.printStackTrace();
 			FailView.printErrorMessage(e.getMessage());
 		}
-
+		
+		
+		
 	}
-
 	public static void main(String[] args) {
 		productController.findByName("스");
 	}
+	
+//	public static void main(String[] args) {
+//		productController.findByName("스");
+//	}
 }

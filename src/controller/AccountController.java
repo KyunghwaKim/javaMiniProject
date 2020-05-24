@@ -2,6 +2,7 @@ package controller;
 
 import exception.ModifyException;
 import exception.NotFoundException;
+import service.AccountHistoryService;
 import service.AccountService;
 import view.FailView;
 import view.SuccessView;
@@ -37,14 +38,12 @@ public class AccountController {
 		}
 	}
 
-	public boolean checkAccountPwd(String sessionId, String accountPwd) {
-		try {
-			service.checkAccountPwd(sessionId, accountPwd);
-			return true;
-		} catch (NotFoundException e) {
-			FailView.errorMessage(e.getMessage());
-			return false;
-		}
+//	public static void main(String[] args) {
+//		AccountController ac = new AccountController();
+//		String id="id1";
+//		ac.checkBalanceById("id1");
+//		ac.checkBalanceById("id2");
+//		ac.checkBalanceById("sdf");
+//	}
 
-	}
 }

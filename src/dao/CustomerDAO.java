@@ -146,13 +146,16 @@ public class CustomerDAO {
 	}
 
 	public void update(Connection con, Customer c) throws ModifyException {
+		System.out.println(c);
 		Statement stmt = null;
 		try {
 			con = SQLConnection.getConnection();
 			String updateSQL1 = "UPDATE customer SET ";
 			String updateSQL2 = " WHERE id='" + c.getId() + "'";
 			boolean flag = false;
-
+			String test = null;
+			System.out.println(test + "1");
+			System.out.println(c.getPwd() + "1");
 			if (c.getPwd() != null && !c.getPwd().equals("")) {
 				updateSQL1 += "pwd='" + c.getPwd() + "'";
 				flag = true;
@@ -204,10 +207,10 @@ public class CustomerDAO {
 				updateSQL1 += "status=" + c.getStatus();
 				flag = true;
 			}
-
+			System.out.println(updateSQL1 + updateSQL2);
 			if (flag) {
 				stmt = con.createStatement();
-
+				System.out.println(updateSQL1 + updateSQL2);
 				stmt.executeUpdate(updateSQL1 + updateSQL2);
 			}
 		} catch (Exception e) {

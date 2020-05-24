@@ -8,15 +8,14 @@ import view.SuccessView;
 public class AccountHistoryController {
 	private static AccountHistoryController controller = new AccountHistoryController();
 	private AccountHistoryService accountHistoryService = AccountHistoryService.getInstance();
-
-	private AccountHistoryController() {
-	}
-
+	
+	private AccountHistoryController() {}
+	
 	public static AccountHistoryController getInstance() {
 		return controller;
 	}
-
-	public void selectById(String id) {
+	
+	public void selectById(String id){
 		try {
 			SuccessView.printAccountHistoryList(accountHistoryService.selectById(id));
 		} catch (NotFoundException e) {
@@ -27,29 +26,11 @@ public class AccountHistoryController {
 			e.printStackTrace();
 		}
 	}
-
-	public void selectInputById(String id) {
-		try {
-			SuccessView.printAccountHistoryInputList(accountHistoryService.selectById(id));
-		} catch (NotFoundException e) {
-			FailView.printErrorMessage(e.getMessage());
-			e.printStackTrace();
-		} catch (Exception e) {
-			FailView.printErrorMessage(e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	public void selectOutputById(String id) {
-		try {
-			SuccessView.printAccountHistoryOutputList(accountHistoryService.selectById(id));
-		} catch (NotFoundException e) {
-			FailView.printErrorMessage(e.getMessage());
-			e.printStackTrace();
-		} catch (Exception e) {
-			FailView.printErrorMessage(e.getMessage());
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		AccountHistoryController ac = new AccountHistoryController();
+//		ac.selectById("id1");
+//		ac.selectById("id2");
+//		ac.selectById("jhgyuy");
+//	}
 
 }

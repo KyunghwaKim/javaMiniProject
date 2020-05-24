@@ -4,9 +4,8 @@ public class Account {
 	private Customer customer;
 	private int balance;
 	private String accountPwd;
-
-	public Account() {
-	}
+	
+	public Account() {}
 
 	public Account(Customer customer, int balance, String accountPwd) {
 		super();
@@ -43,5 +42,5 @@ public class Account {
 	public String toString() {
 		return "customer=" + customer + ", balance=" + balance + ", accountPwd=" + accountPwd;
 	}
-
+	
 }

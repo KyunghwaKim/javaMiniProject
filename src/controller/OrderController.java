@@ -5,32 +5,38 @@ import java.util.List;
 
 import exception.AddException;
 import exception.NotFoundException;
-import service.PurchaseHistoryService;
+import service.OrderService;
 import view.FailView;
 import view.SuccessView;
-import vo.PurchaseHistory;
+import vo.Order;
 
-public class PurchaseHistoryController {
-	private static PurchaseHistoryController controller = new PurchaseHistoryController();
-	private PurchaseHistoryService service = PurchaseHistoryService.getInstance();
-
-	private PurchaseHistoryController() {
-	}
-
-	public void insert(int pd_no, String receivedId, int quantity, Timestamp dt, String id_check) {
-
+public class OrderController {
+	private static OrderController controller = new OrderController();
+	private OrderService service = OrderService.getInstance();
+	
+	private OrderController() {	}
+	
+	public void insert(int pd_no, String receivedId, int quantity, Timestamp dt, String id_check ) {
+		
+		
 		try {
-			service.insert(pd_no, receivedId, quantity, dt, id_check);
+			service.insert( pd_no, receivedId, quantity, dt, id_check);
 			SuccessView.printBuy("해당 상품이 구매되었습니다.");
 		} catch (AddException e) {
-			FailView.errorMessage("잔액이 부족합니다");
+			
+			e.printStackTrace();
+			FailView.errorMessage(e.getMessage());
 		} catch (NotFoundException e) {
+			
+			//e.printStackTrace();
+			FailView.errorMessage(e.getMessage());
 			System.out.println("상품을 보내실 id에 대한 정보를 찾지 못했습니다.");
 		}
-
+		
+		
 	}
-
-	public static PurchaseHistoryController getInstance() {
+	
+	public static OrderController getInstance() {
 		return controller;
 	}
 
@@ -46,17 +52,17 @@ public class PurchaseHistoryController {
 
 	public void findById(String id) {
 		try {
-			List<PurchaseHistory> list = service.findById(id);
+			List<Order> list = service.findById(id);
 			SuccessView.printPurchaseHistory(list);
 		} catch (NotFoundException e) {
 			e.printStackTrace();
 			FailView.errorMessage(e.getMessage());
 		}
 	}
-
+	
 	public void findRefundById(String id) {
 		try {
-			List<PurchaseHistory> list = service.findById(id);
+			List<Order> list = service.findById(id);
 			SuccessView.printRefundPurchaseHistory(list);
 		} catch (NotFoundException e) {
 			e.printStackTrace();
@@ -66,7 +72,7 @@ public class PurchaseHistoryController {
 
 	public void findAll() {
 		try {
-			List<PurchaseHistory> list = service.findAll();
+			List<Order> list = service.findAll();
 			SuccessView.printPurchaseHistory(list);
 		} catch (NotFoundException e) {
 			e.printStackTrace();
@@ -74,9 +80,9 @@ public class PurchaseHistoryController {
 		}
 	}
 
-	public void refund(PurchaseHistory order) {
+	public void refund(Order order) {
 		try {
-			PurchaseHistory refundOrder = service.findRefundProduct(order);
+			Order refundOrder = service.findRefundProduct(order);
 			service.refund(refundOrder);
 			SuccessView.printRefund("환불이 정상적으로 처리되었습니다");
 		} catch (NotFoundException e) {
@@ -85,16 +91,6 @@ public class PurchaseHistoryController {
 		} catch (AddException e1) {
 			e1.printStackTrace();
 			FailView.errorMessage("환불에 실패하였습니다");
-		}
-	}
-
-	public void findByDate(String id, Timestamp startTime, Timestamp endTime) {
-		try {
-			List<PurchaseHistory> list = service.findByDate(id, startTime, endTime);
-			SuccessView.printPurchaseHistoryByDate(list, startTime, endTime);
-		} catch (NotFoundException e) {
-			e.printStackTrace();
-			FailView.errorMessage(e.getMessage());
 		}
 	}
 }

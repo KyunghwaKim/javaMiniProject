@@ -11,12 +11,10 @@ public class Customer {
 	private String phoneNo;
 	private Date joinDt;
 	private int status;
-
-	public Customer() {
-	}
-
-	public Customer(String id, String pwd, String name, int age, String gender, String phoneNo, Date joinDt,
-			int status) {
+	
+	public Customer() {}
+	
+	public Customer(String id, String pwd, String name, int age, String gender, String phoneNo, Date joinDt, int status) {
 		super();
 		this.id = id;
 		this.pwd = pwd;
@@ -94,7 +92,7 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "id=" + id + ", pwd=" + pwd + ", name=" + name + ", age=" + age + ", gender=" + gender + ", phoneNo="
-				+ phoneNo + ", joinDt=" + joinDt + ", status=" + status;
+		return "id=" + id + ", pwd=" + pwd + ", name=" + name + ", age=" + age + ", gender=" + gender
+				+ ", phoneNo=" + phoneNo + ", joinDt=" + joinDt + ", status=" + status;
 	}
 }

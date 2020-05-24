@@ -6,9 +6,8 @@ public class Product {
 	private String name;
 	private int sold;
 	private int status;
-
-	public Product() {
-	}
+	
+	public Product() {}
 
 	public Product(int no, int price, String name, int sold, int status) {
 		super();
@@ -63,5 +62,5 @@ public class Product {
 	public String toString() {
 		return "no=" + no + ", price=" + price + ", name=" + name + ", sold=" + sold + ", status=" + status;
 	}
-
+	
 }

@@ -42,29 +42,29 @@ public class AccountDAO {
 		Statement stmt = null;
 		try {
 			Customer customer = account.getCustomer();
-			String updateSQL1 = "UPDATE account SET ";
-			String updateSQL2 = " WHERE user_id='" + customer.getId() + "'";
-			boolean flag = false;
-			if (account.getBalance() != 0) {
-				updateSQL1 += "balance='" + account.getBalance() + "'";
-				flag = true;
-			}
-			if (account.getAccountPwd() != null && !account.getAccountPwd().equals("")) {
-				if (flag) {
-					updateSQL1 += ",";
-				}
-				updateSQL1 += "account_pwd='" + account.getAccountPwd() + "'";
-				flag = true;
-			}
-			if (flag) {
-				stmt = con.createStatement();
-				stmt.executeUpdate(updateSQL1 + updateSQL2);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new AddException(e.getMessage());
-		} finally {
-			SQLConnection.close(null, stmt, null);
-		}
+	        String updateSQL1 = "UPDATE account SET ";
+	        String updateSQL2 = " WHERE user_id='" + customer.getId() + "'";
+	        boolean flag = false;
+	        if(account.getBalance() != 0) {
+	        	updateSQL1 += "balance='" + account.getBalance() + "'";
+	        	flag = true;
+	        }
+	        if(account.getAccountPwd() != null && !account.getAccountPwd().equals("")) {
+	        	if(flag) {
+	        		updateSQL1 += ",";
+	        	}
+	        	updateSQL1 += "account_pwd='" + account.getAccountPwd() +"'";
+	        	flag = true;
+	        }
+	        if(flag) {
+	            stmt = con.createStatement();
+	            stmt.executeUpdate(updateSQL1 + updateSQL2);
+	        }
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    	throw new AddException(e.getMessage());
+	    } finally {
+	    	SQLConnection.close(null, stmt, null);
+	    }
 	}
 }

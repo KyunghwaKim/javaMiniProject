@@ -7,13 +7,13 @@ import java.util.Scanner;
 import controller.AccountController;
 import controller.AccountHistoryController;
 import controller.CustomerController;
-import controller.PurchaseHistoryController;
+import controller.OrderController;
 import controller.ProductController;
 import session.Session;
 import session.SessionSet;
 import vo.Account;
 import vo.Customer;
-import vo.PurchaseHistory;
+import vo.Order;
 import vo.Product;
 
 public class MainView {
@@ -21,9 +21,10 @@ public class MainView {
 	private static AccountHistoryController accountHistoryController = AccountHistoryController.getInstance();
 	private static CustomerController customerController = CustomerController.getInstance();
 	private static ProductController productController = ProductController.getInstance();
-	private static PurchaseHistoryController orderController = PurchaseHistoryController.getInstance();
+	private static OrderController orderController = OrderController.getInstance();
 
 	static Scanner sc = new Scanner(System.in);
+	static Scanner sc2 = new Scanner(System.in);
 
 	public static void printMenu() {
 		while (true) {
@@ -83,6 +84,7 @@ public class MainView {
 		String pwd = sc.next();
 
 		SessionSet ss = SessionSet.getInstance();
+		Session addSession = new Session(id);
 		customerController.login(id, pwd);
 		Session session = ss.get(id);
 
@@ -92,7 +94,7 @@ public class MainView {
 
 			// 관리자
 			if (session.getAttribute("status").equals("2")) {
-//         if (true) {
+//          if (true) {
 				System.out.println("--관리자 메뉴--");
 				System.out.println("1.회원조회, 2.상품조회, 3.거래내역조회, 4.상품등록, 5.상품정보변경, 9.로그아웃");
 				menu = sc.next();
@@ -212,7 +214,8 @@ public class MainView {
 				}
 
 			} else if ((session.getAttribute("status").equals("1"))) {
-				/////// 사용자 모드////////////////////
+//         } else if (true) {
+				///////////////// 사용자 모드////////////////////
 				if (!"admin".equals(id)) {
 					System.out.println("--" + id + "님 사용자메뉴--");
 					System.out.println("1.계좌조회, 2.상품조회, 3.선물받은내역, 4.잔액충전, 5.환불, 6.회원정보변경, 7.탈퇴, 9.로그아웃");
@@ -220,28 +223,14 @@ public class MainView {
 					switch (menu) {
 					case "1":// 1.계좌조회
 						do {
-							System.out.println("1.잔액조회, 2.입출금내역조회, 3.구매내역조회, 4.기간별 구매내역 9.뒤로가기");
+							System.out.println("1.잔액조회, 2.입출금내역조회, 9.뒤로가기");
 							menu = sc.next();
 							switch (menu) {
 							case "1":// 1)잔액조회
 								accountController.checkBalanceById(id);
 								break;
-							case "2":// 2)입출금내역조회
+							case "2":// 2)입축금내역조회
 								accountHistoryController.selectById(id);
-								break;
-							case "3":// 3)구매내역조회
-								orderController.findById(id);
-								break;
-							case "4":// 4)기간별 구매내역
-								System.out.println("시작일자(YYYY-MM-DD):");
-								String startStr = sc.next();
-								startStr += " 00:00:00.0";
-								Timestamp startTime = Timestamp.valueOf(startStr);
-								System.out.println("종료일자(YYYY-MM-DD):");
-								String endStr = sc.next();
-								endStr += " 00:00:00.0";
-								Timestamp endTime = Timestamp.valueOf(endStr);
-								orderController.findByDate(id, startTime, endTime);
 								break;
 							case "9":// 9)뒤로가기
 								break;
@@ -251,7 +240,7 @@ public class MainView {
 						break;
 					case "2":// 2.상품조회
 						do {
-							System.out.println("1.상품검색 및 구매, 2.전체조회(인기순), 9.뒤로가기");
+							System.out.println("1.상품명검색, 2.전체조회(인기순), 9.뒤로가기");
 							menu = sc.next();
 							switch (menu) {
 							case "1":// 1)상품명검색
@@ -326,27 +315,25 @@ public class MainView {
 						break;
 					case "5":// 5.환불
 						do {
-							System.out.println("1.환불하기 , 2.환불상품내역, 9.뒤로가기");
+							System.out.println("1.상품거래내역조회, 2.환불상품내역, 9.뒤로가기");
 							menu = sc.next();
 							switch (menu) {
 							case "1":// 1)상품거래내역조회
 								// 상품거래내역//
 								System.out.println("--" + id + "님의 구매목록--");
 								orderController.findById(id);
-								System.out.println("1.환불, 9.뒤로가기");
+								System.out.println("1.환불, 2.뒤로가기");
 								switch (sc.next()) {
 								case "1":
 									System.out.println("환불하실 상품의 상품번호를 입력해 주십시오.");
 									int pd_no = sc.nextInt();
 									System.out.println("환불하실 개수를 입력해 주십시오.");
 									int quantity = sc.nextInt();
-									System.out.println("선물을 받은 고객님의 아이디를 입력해 주십시오.");
-									String recipient = sc.next();
 									Customer customer = new Customer();
 									customer.setId(id);
 									Account account = new Account();
 									account.setCustomer(customer);
-									PurchaseHistory order = new PurchaseHistory();
+									Order order = new Order();
 									order.setAccount(account);
 
 									Product product = new Product();
@@ -354,8 +341,6 @@ public class MainView {
 									order.setProduct(product);
 
 									order.setQuantity(quantity);
-									order.setReceiveId(new Customer());
-									order.getReceiveId().setId(recipient);
 									orderController.refund(order);
 									break;
 								case "9":
@@ -374,7 +359,7 @@ public class MainView {
 					case "6":// 6.회원정보변경
 						System.out.println("--회원 정보 수정하기--");
 						System.out.print("비밀번호:");
-						String modifyPwd = sc.next();
+						String modifyPwd = sc2.next();
 						System.out.print("이름:");
 						String modifyName = sc.next();
 						System.out.print("나이:");
@@ -383,7 +368,7 @@ public class MainView {
 						System.out.print("성별[M/F]:");
 						String modifyGender = sc.next();
 						System.out.print("전화번호: ");
-						String modifyPhoneNo = sc.next();
+						String modifyPhoneNo = sc2.next();
 						System.out.println("계좌비밀번호:");
 						String modifyAccountPwd = sc.next();
 						System.out.println();
@@ -404,7 +389,6 @@ public class MainView {
 						break;
 					case "7":// 7.탈퇴
 						customerController.withdraw(id);
-						customerController.logout(id);
 						return;
 					case "9":// 9.로그아웃
 						customerController.logout(id);
@@ -415,16 +399,7 @@ public class MainView {
 
 			} else {
 				///////// 탈퇴자메뉴////////////
-				System.out.println("1.재가입, 9.로그아웃");
-				menu = sc.next();
-				switch (menu) {
-				case "1":// 1)전체조회
-					customerController.CancelWithdraw(id);
-					customerController.logout(id);
-					break;
-				case "9":
-					break;
-				}
+				System.out.println("아직 탈퇴자 메뉴 없음 ㅅㄱ");
 				return;
 			}
 
@@ -432,27 +407,31 @@ public class MainView {
 
 	}
 
-	public static void purchase(Session session) {
-		String id_check = session.getSessionId();
-		System.out.println("계좌 비밀번호를 입력해 주십시오");
-		String accountPwd = sc.next();
-		if (accountController.checkAccountPwd(session.getSessionId(), accountPwd)) {
-
-			System.out.println("구매할 상품번호를 입력해 주십시오");
-			int pd_no = sc.nextInt();
-			System.out.println("수량을 입력해주십시오");
-			int quantity = sc.nextInt();
-			System.out.println("선물하실 분의 ID를 입력해주세요");
-			String receivedId = sc.next();
-
-			Date date = new Date();
-			Timestamp dt = new Timestamp(date.getTime());
-			orderController.insert(pd_no, receivedId, quantity, dt, id_check);
-		}
+	// 회원정보변경(수정하기)
+	public static void modify(String id) {
 	}
 
 	public static void main(String[] args) {
 		printMenu();
+	}
+
+	public static void purchase(Session session) {
+		System.out.println("구매할 상품번호를 입력해 주십시오");
+		int pd_no = sc.nextInt();
+		System.out.println("수량을 입력해주십시오");
+		int quantity = sc.nextInt();
+		System.out.println("선물하실 분의 ID를 입력해주세요");
+		String receivedId = sc.next();
+		String id_check = session.getSessionId();
+
+		Date date = new Date();
+		Timestamp dt = new Timestamp(date.getTime());
+		orderController.insert(pd_no, receivedId, quantity, dt, id_check);
+	}
+
+	public static void printByStatus(int status) {
+
+		;
 	}
 
 }

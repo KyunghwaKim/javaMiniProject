@@ -3,7 +3,6 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -12,11 +11,10 @@ import java.util.List;
 
 import connection.SQLConnection;
 import exception.AddException;
-import exception.ModifyException;
 import exception.NotFoundException;
 import vo.Account;
 import vo.AccountHistory;
-import vo.PurchaseHistory;
+import vo.Order;
 
 public class AccountHistoryDAO {
 	CustomerDAO customerDAO = new CustomerDAO();
@@ -52,10 +50,11 @@ public class AccountHistoryDAO {
 	 * @param date  출금일자
 	 * @throws AddException
 	 */
-	public void insertAccHis(Connection con, PurchaseHistory order, String date) throws AddException {
+	public void insertAccHis(Connection con, Order order, String date) throws AddException {
 		PreparedStatement pstmt = null;
 		try {
 			int balance = order.getAccount().getBalance();
+			System.out.println(balance);
 			int type = 1;
 			int quantity = order.getQuantity();
 			if (order.getStatus() == 1) { // 구매
@@ -64,46 +63,14 @@ public class AccountHistoryDAO {
 			} else if (order.getStatus() == 2) { // 환불
 				balance += order.getProduct().getPrice() * quantity;
 			}
+
+			System.out.println(balance);
 			String insertAccHisSQL = "INSERT INTO account_history(user_id, acc_his_dt, type, money, acc_balance) VALUES(?, ?, ?, ?, ?)";
 			pstmt = con.prepareStatement(insertAccHisSQL);
 
 			String id = order.getAccount().getCustomer().getId();
 			pstmt.setString(1, id);
 			pstmt.setString(2, date);
-			pstmt.setInt(3, type);
-			pstmt.setInt(4, order.getProduct().getPrice() * quantity);
-
-			pstmt.setInt(5, balance);
-			pstmt.executeUpdate();
-
-			AccountDAO aDao = new AccountDAO();
-			Account account = order.getAccount();
-			account.setBalance(balance);
-			aDao.update(con, account); // 계좌금액 업데이트
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new AddException(e.getMessage());
-		} finally {
-			SQLConnection.close(null, pstmt, null);
-		}
-	}
-
-	public void refundAccHis(Connection con, PurchaseHistory order, String date) throws AddException {
-		PreparedStatement pstmt = null;
-		try {
-			int balance = order.getAccount().getBalance();
-			int type = 4;
-			int quantity = order.getQuantity();
-
-			balance = accountDAO.selectById(order.getAccount().getCustomer().getId()).getBalance()
-					+ order.getProduct().getPrice() * quantity;
-
-			String insertAccHisSQL = "INSERT INTO account_history(user_id, acc_his_dt, type, money, acc_balance) VALUES(?, ?, ?, ?, ?)";
-			pstmt = con.prepareStatement(insertAccHisSQL);
-
-			String id = order.getAccount().getCustomer().getId();
-			pstmt.setString(1, id);
-			pstmt.setTimestamp(2, order.getDate());
 			pstmt.setInt(3, type);
 			pstmt.setInt(4, order.getProduct().getPrice() * quantity);
 
@@ -186,23 +153,6 @@ public class AccountHistoryDAO {
 			throw new NotFoundException("계좌 거래 목록을 찾을 수 없습니다.");
 		} finally {
 			SQLConnection.close(con, pstmt, rs);
-		}
-
-	}
-
-	public void refund(Connection con, PurchaseHistory order) throws ModifyException {
-		PreparedStatement pstmt = null;
-		String sql = "UPDATE account_history SET type = 3 WHERE user_id=? AND acc_his_dt=?";
-		try {
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, order.getAccount().getCustomer().getId());
-			pstmt.setTimestamp(2, order.getDate());
-			pstmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new ModifyException("환불 작업에 실패하였습니다.");
-		} finally {
-			SQLConnection.close(null, pstmt, null);
 		}
 
 	}

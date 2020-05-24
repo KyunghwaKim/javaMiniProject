@@ -6,43 +6,32 @@ import java.util.Map;
 public class Session {
 	private String sessionId;
 	private Map<String, Object> attributes;
-
-	public Session() {
-	}
-
+	public Session() {}
 	public Session(String sessionId) {
 		this.sessionId = sessionId;
 		attributes = new HashMap<>();
 	}
-
 	public void setAttribute(String name, Object value) {
 		attributes.put(name, value);
 	}
-
-	public Object getAttribute(String name) {
+	public Object getAttribute(String name){
 		return attributes.get(name);
 	}
-
 	public void removeAttribute(String name) {
 		attributes.remove(name);
 	}
-
 	public String getSessionId() {
 		return sessionId;
 	}
-
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
 	}
-
 	public Map<String, Object> getAttribute() {
 		return attributes;
 	}
-
 	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -53,7 +42,6 @@ public class Session {
 		builder.append("]");
 		return builder.toString();
 	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -61,7 +49,6 @@ public class Session {
 		result = prime * result + ((sessionId == null) ? 0 : sessionId.hashCode());
 		return result;
 	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -78,5 +65,6 @@ public class Session {
 			return false;
 		return true;
 	}
-
+	
+	
 }

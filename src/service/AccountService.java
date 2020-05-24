@@ -67,27 +67,4 @@ public class AccountService {
 
 	}
 
-	public void deposit(Connection con, String id, int money) throws ModifyException {
-		try {
-			Account account = dao.selectById(id);
-			Timestamp currTime = new Timestamp(System.currentTimeMillis());
-			AccountHistory accountHistory = new AccountHistory(account, currTime, 1, money,
-					account.getBalance() + money);
-			account.setBalance(account.getBalance() + money);
-			dao.update(con, account);
-			aHDao.insert(accountHistory);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new ModifyException();
-		}
-	}
-
-	public void checkAccountPwd(String sessionId, String accountPwd) throws NotFoundException {
-		Account account = dao.selectById(sessionId);
-		if (!account.getAccountPwd().equals(accountPwd)) {
-			throw new NotFoundException("계좌 비밀번호 불일치");
-		}
-
-	}
-
 }
